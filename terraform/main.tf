@@ -14,8 +14,9 @@ provider "digitalocean" {
 }
 
 resource "digitalocean_droplet" "email" {
-  image  = "debian-10-x64"
-  name   = "email"
-  region = "nyc3"
-  size   = "s-1vcpu-1gb"
+  image    = "debian-10-x64"
+  name     = "email"
+  region   = "nyc3"
+  size     = "s-1vcpu-1gb"
+  ssh_keys = ["30193098"]
 }
