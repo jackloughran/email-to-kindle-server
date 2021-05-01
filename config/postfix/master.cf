@@ -43,6 +43,7 @@ smtp      inet  n       -       y       -       -       smtpd
 #  -o milter_macro_daemon_name=ORIGINATING
 #628       inet  n       -       y       -       -       qmqpd
 pickup    unix  n       -       y       60      1       pickup
+  -o content_filter=filter:dummy
 cleanup   unix  n       -       y       -       0       cleanup
 qmgr      unix  n       -       n       300     1       qmgr
 #qmgr     unix  n       -       n       300     1       oqmgr

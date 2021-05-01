@@ -35,6 +35,36 @@
       ansible.builtin.copy:
         src: ../scripts/filter_script
         dest: /opt/filter_script
+    - name: Create ruby processing script directory
+      ansible.builtin.file:
+        path: /opt/git
+        state: directory
+    - name: Install git
+      ansible.builtin.package:
+        name: git
+        state: present
+    - name: Clone ruby processing script
+      register: ruby_processing_script
+      ansible.builtin.git:
+        repo: git@github.com:jackloughran/kindlize-email.git
+        dest: /opt/git/kindlize-email
+    - name: Install bundler
+      ansible.builtin.shell:
+        cmd: gem install bundler && touch /opt/bundler_installed.txt
+        creates: /opt/bundler_installed.txt
+    - name: Install gcc for nokogiri
+      ansible.builtin.package:
+        name: build-essential
+        state: present
+    - name: Install zlib for nokogiri
+      ansible.builtin.package:
+        name: zlib1g-dev
+        state: present
+    - name: Run ruby processing script setup
+      # when: ruby_processing_script.changed
+      ansible.builtin.shell:
+        chdir: /opt/git/kindlize-email
+        cmd: ./bin/setup
 
     - name: Make sure daemon is up
       when: config_file.changed or master_file.changed
