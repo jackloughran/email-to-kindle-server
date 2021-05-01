@@ -4,3 +4,7 @@ exec > /var/spool/filter/email.eml
 while IFS= read -r line; do
   printf '%s\n' "$line"
 done
+
+cd /opt/git/kindlize-email && ./bin/eml-to-mobi /var/spool/filter/email.eml /opt/calibre /var/spool/filter
+
+cd /var/spool/filter && echo "ebook attached" | /usr/bin/mail -s 'ebook incoming' -r 'root@kindle.jackloughran.co' -A out.mobi "$KINDLE_EMAIL_ADDRESS"

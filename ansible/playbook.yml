@@ -65,8 +65,25 @@
       ansible.builtin.shell:
         chdir: /opt/git/kindlize-email
         cmd: ./bin/setup
+    - name: Create calibre directory
+      ansible.builtin.file:
+        path: /opt/calibre
+        state: directory
+    - name: Install libgl1 for calibre
+      ansible.builtin.package:
+        name: libgl1-mesa-glx
+        state: present
+    - name: Install qt for calibre
+      ansible.builtin.package:
+        name: qt5-default
+        state: present
+    - name: Install calibre
+      ansible.builtin.shell:
+        chdir: /opt/calibre
+        cmd: wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sh /dev/stdin
+        creates: /opt/calibre/ebook-convert
 
-    - name: Make sure daemon is up
+    - name: Restart postfix
       when: config_file.changed or master_file.changed
       ansible.builtin.systemd:
         name: postfix
