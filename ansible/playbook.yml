@@ -1,0 +1,43 @@
+- name: Email server setup
+  hosts: email
+  remote_user: root
+  tasks:
+    - name: Install postfix
+      ansible.builtin.package:
+        name: postfix
+        state: present
+    - name: Copy config file
+      register: config_file
+      ansible.builtin.copy:
+        src: ../config/postfix/main.cf
+        dest: /etc/postfix/main.cf
+    - name: Copy master file
+      register: master_file
+      ansible.builtin.copy:
+        src: ../config/postfix/master.cf
+        dest: /etc/postfix/master.cf
+
+    # filter stuff
+    - name: Install ruby
+      ansible.builtin.package:
+        name: ruby-full
+        state: present
+    - name: Create filter user
+      ansible.builtin.user:
+        name: filter
+    - name: Create filter directory
+      ansible.builtin.file:
+        path: /var/spool/filter
+        state: directory
+        owner: filter
+        mode: "0700"
+    - name: Copy filter script
+      ansible.builtin.copy:
+        src: ../scripts/filter_script
+        dest: /opt/filter_script
+
+    - name: Make sure daemon is up
+      when: config_file.changed or master_file.changed
+      ansible.builtin.systemd:
+        name: postfix
+        state: restarted

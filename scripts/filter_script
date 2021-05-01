@@ -1,0 +1,6 @@
+#!/bin/bash
+
+exec > /var/spool/filter/email.eml
+while IFS= read -r line; do
+  printf '%s\n' "$line"
+done
